@@ -6,9 +6,21 @@ const app = express();
 const dotenv = require("dotenv");
 const cors = require('cors');
 
+
+const allowedOrigins = [
+  'http://localhost:3000', // Your first origin
+  'https://logisticsapp-silk.vercel.app',     // Replace with your second origin
+];
 app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your frontend URL
-  credentials: true
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, origin);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 }));
 
 dotenv.config();
