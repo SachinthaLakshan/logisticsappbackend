@@ -4,6 +4,13 @@ const Product = require("./models/product.model.js");
 const userRoute = require("./routes/user.route.js");
 const app = express();
 const dotenv = require("dotenv");
+const cors = require('cors');
+
+app.use(cors({
+  origin: 'http://localhost:3000', // Replace with your frontend URL
+  credentials: true
+}));
+
 dotenv.config();
 
 // middleware
