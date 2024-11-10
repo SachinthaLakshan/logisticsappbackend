@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const Product = require("./models/product.model.js");
+const directionRoute = require("./routes/direction.route.js");
 const userRoute = require("./routes/user.route.js");
 const app = express();
 const dotenv = require("dotenv");
@@ -32,6 +32,7 @@ app.use(express.urlencoded({extended: false}));
 
 // routes
 app.use("/api/user", userRoute);
+app.use("/api/direction", directionRoute);
 
 
 
