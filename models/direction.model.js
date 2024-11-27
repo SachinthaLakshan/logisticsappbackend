@@ -28,13 +28,17 @@ const DirectionSchema = mongoose.Schema(
             type: Boolean,
             required: false,
         },
+        driverConfirmed: {
+            type: Boolean,
+            required: false,
+        },
         lorryCapacity: {
             type: Number,
             required: false,
         },
-        lorryRegNumber: {
-            type: String,
-            required: false,
+        vehicle: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Vehicle'
         },
     },
     {

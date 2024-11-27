@@ -45,32 +45,9 @@ const UserSchema = mongoose.Schema(
             type: String,
             required: false
         },
-        fleetDetails: {
-            type: [
-                {
-                    licensePlateNumber: {
-                        type: String
-                    },
-                    height: {
-                        type: Number
-                    },
-                    length: {
-                        type: Number
-                    },
-                    width: {
-                        type: Number
-                    },
-                    containerCapacity: {
-                        type: Number
-                    },
-                    maximumLoadCapacity: {
-                        type: Number
-                    },
-                    vehicleType: {
-                        type: String
-                    }
-                }
-            ]
+        vehicleDetails: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Vehicle'
         },
         fullName: {
             type: String,

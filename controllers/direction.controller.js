@@ -1,6 +1,8 @@
 
 const { Client } = require('@googlemaps/google-maps-services-js');
 const Direction = require("../models/direction.model");
+const { mongo, default: mongoose } = require('mongoose');
+const Vehicle = require('../models/vehicle.modal');
 
 // Create a new client instance
 const client = new Client({});
@@ -8,7 +10,7 @@ const client = new Client({});
 // Create a new Direction
 exports.createDirection = async (req, res) => {
     try {
-        const { origin, destination, waypoints, currentLocation, onTheWay,lorryRegNumber } = req.body;
+        const { origin, destination, waypoints, currentLocation, onTheWay,vehicle } = req.body;
 
         // Create a new Direction instance with request data
         const direction = new Direction({
@@ -16,8 +18,9 @@ exports.createDirection = async (req, res) => {
             destination,
             waypoints,
             currentLocation,
-            onTheWay,
-            lorryRegNumber
+            onTheWay:onTheWay ||false,
+            vehicle,
+            driverConfirmed: false
         });
 
         // Save the new Direction to the database
@@ -43,12 +46,12 @@ exports.updateLorryDetails = async (req, res) => {
 console.log(lorryRegNumber,lorryCapacity);
 
         // Find and update the document by lorryRegNumber
-        const updatedDirection = await Direction.findOneAndUpdate(
-            { lorryRegNumber: lorryRegNumber },
-            { $set: { lorryCapacity: lorryCapacity } }
+        const updatedVehicle = await Vehicle.findOneAndUpdate(
+            { licensePlateNumber: lorryRegNumber },
+            { $set: { containerCapacity: lorryCapacity } }
         );
 
-        if (!updatedDirection) {
+        if (!updatedVehicle) {
             return res.status(404).json({
                 message: "Direction with the specified lorryRegNumber not found",
             });
@@ -56,7 +59,7 @@ console.log(lorryRegNumber,lorryCapacity);
 
         res.status(200).json({
             message: "Direction updated successfully",
-            data: updatedDirection,
+            data: updatedVehicle,
         });
     } catch (error) {
         res.status(400).json({
@@ -65,6 +68,56 @@ console.log(lorryRegNumber,lorryCapacity);
         });
     }
 };
+
+exports.updateDriverResponse = async (req, res) => {
+    try {
+        const { directionId,response } = req.params;
+
+        // Find and update the document by lorryRegNumber
+        const updatedDirection = await Direction.findOneAndUpdate(
+            { _id: directionId },
+            { $set: { driverConfirmed: response } }
+        );
+
+        if (!updatedDirection) {
+            return res.status(404).json({
+                message: "Driver Response not found",
+            });
+        }
+
+        res.status(200).json({
+            message: "Driver response updated successfully"
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: "Error updating driver response",
+            error: error.message,
+        });
+    }
+};
+
+exports.findAssignedDirection = async (req, res) => {
+    try {
+        const { vehicleId } = req.params;
+
+        const foundDirection = await Direction.findOne({ vehicle: vehicleId, onTheWay: true }).populate('vehicle');
+
+        if (!foundDirection) {
+            return res.status(404).json({
+                message: "You have not been assigned a Trip yet",
+            });
+        }
+        res.status(200).json({
+            message: "Trip found successfully",
+            data: foundDirection,
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: "Error finding direction",
+            error: error.message,
+        });
+    }
+}
 
 exports.getDirections = async (req, res) => {
     const {currentLatitude,currentLongitude} = req.body;
