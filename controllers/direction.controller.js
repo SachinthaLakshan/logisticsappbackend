@@ -10,7 +10,7 @@ const client = new Client({});
 // Create a new Direction
 exports.createDirection = async (req, res) => {
     try {
-        const { origin, destination, waypoints, currentLocation, onTheWay,vehicle } = req.body;
+        const { origin, destination, waypoints, currentLocation, onTheWay, vehicle } = req.body;
 
         // Create a new Direction instance with request data
         const direction = new Direction({
@@ -18,7 +18,7 @@ exports.createDirection = async (req, res) => {
             destination,
             waypoints,
             currentLocation,
-            onTheWay:onTheWay ||false,
+            onTheWay: onTheWay || false,
             vehicle,
             driverConfirmed: false
         });
@@ -42,8 +42,8 @@ exports.createDirection = async (req, res) => {
 
 exports.updateLorryDetails = async (req, res) => {
     try {
-        const { lorryRegNumber,lorryCapacity } = req.params;
-console.log(lorryRegNumber,lorryCapacity);
+        const { lorryRegNumber, lorryCapacity } = req.params;
+        console.log(lorryRegNumber, lorryCapacity);
 
         // Find and update the document by lorryRegNumber
         const updatedVehicle = await Vehicle.findOneAndUpdate(
@@ -71,7 +71,7 @@ console.log(lorryRegNumber,lorryCapacity);
 
 exports.updateDriverResponse = async (req, res) => {
     try {
-        const { directionId,response } = req.params;
+        const { directionId, response } = req.params;
 
         // Find and update the document by lorryRegNumber
         const updatedDirection = await Direction.findOneAndUpdate(
@@ -120,7 +120,7 @@ exports.findAssignedDirection = async (req, res) => {
 }
 
 exports.getDirections = async (req, res) => {
-    const {currentLatitude,currentLongitude} = req.body;
+    const { currentLatitude, currentLongitude } = req.body;
     try {
         let nearbyRoutes = [];
         const directionsList = await Direction.find({ onTheWay: true });
@@ -158,7 +158,7 @@ exports.getDirections = async (req, res) => {
 
             }
         }
-        return  res.status(200).json({ message: "Successful",nearbyRoute:nearbyRoutes });
+        return res.status(200).json({ message: "Successful", nearbyRoute: nearbyRoutes });
     } catch (error) {
         console.error('Error fetching directions:', error);
         return res.status(400).json({ message: "Error", error });
@@ -227,4 +227,22 @@ function isWithin5km(latitude, longitude, locations) {
         });
         return distance <= 5; // Check if distance is within 5 km
     });
+}
+
+
+exports.updateCurrentLocation = async (req, res) => {
+    const { directionId, lat, lng } = req.body;
+
+    try {
+        const direction = await Direction.findById(directionId);
+
+        if (!direction) {
+            return res.status(404).json({ message: "Direction not found" });
+        }
+        direction.currentLocation = { lat, lng };
+        await direction.save();
+        res.status(200).json({ message: "Current location updated successfully" });
+    } catch (error) {
+        res.status(400).json({ message: "Error updating current location", error: error.message });
+    }
 }
