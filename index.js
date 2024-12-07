@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const directionRoute = require("./routes/direction.route.js");
 const userRoute = require("./routes/user.route.js");
+const adminRoute = require("./routes/admin.route.js");
 const app = express();
 const dotenv = require("dotenv");
 const cors = require('cors');
@@ -33,6 +34,7 @@ app.use(express.urlencoded({extended: false}));
 // routes
 app.use("/api/user", userRoute);
 app.use("/api/direction", directionRoute);
+app.use("/api/admin", adminRoute);
 
 
 

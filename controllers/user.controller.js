@@ -70,7 +70,7 @@ exports.getUserById = async (req, res) => {
     const { userId } = req.params;
 
     try {
-        const user = await User.findOne({ _id: userId });
+        const user = await User.findOne({ _id: userId }).populate('vehicleDetails');
         if (!user) {
             return res.status(401).json({ message: "Invalid User" });
         }
