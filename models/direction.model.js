@@ -40,6 +40,14 @@ const DirectionSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Vehicle'
         },
+        endDate: {
+            type: Date,
+            required: false,
+        },
+        startDate: {
+            type: Date,
+            required: false,
+        },
     },
     {
         timestamps: true,
