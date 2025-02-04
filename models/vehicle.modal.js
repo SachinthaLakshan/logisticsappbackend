@@ -29,7 +29,12 @@ const VehicleSchema = mongoose.Schema(
         vehicleType: {
             type: String,
             required: false
-        }
+        },
+        assignedRoute: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Direction',
+            required: false
+        },
     },
     {
         timestamps: true,

@@ -246,3 +246,18 @@ exports.updateCurrentLocation = async (req, res) => {
         res.status(400).json({ message: "Error updating current location", error: error.message });
     }
 }
+exports.removeDirection = async (req, res) => {
+    const { directionId } = req.params;
+    try {        
+        const direction = await Direction.findByIdAndDelete(directionId);
+        if(direction.vehicle != undefined){
+            await Vehicle.updateOne({ _id: direction.vehicle }, { $unset: { assignedRoute: "" } });
+        }
+        if (!direction) {
+            return res.status(404).json({ message: "Direction not found" });
+        }
+        res.status(200).json({ message: "Direction deleted successfully" });
+    } catch (error) {
+        res.status(400).json({ message: "Error deleting direction", error: error.message });
+    }
+}

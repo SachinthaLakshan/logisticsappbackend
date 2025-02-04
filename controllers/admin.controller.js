@@ -13,7 +13,7 @@ exports.getAllVehicles = async (req, res) => {
 
 exports.getAllRoutes = async (req, res) => {
     try {
-        const directions = await Direction.find();
+        const directions = await Direction.find().populate('vehicle');
         res.status(200).json(directions);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -24,6 +24,31 @@ exports.getAllDrivers = async (req, res) => {
     try {
         const users = await User.find({userType:'TransportProvider'}).populate('vehicleDetails');
         res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+exports.assignVehicleToRoute = async (req, res) => {
+    try {
+        const { vehicleId, directionId } = req.body;
+        const vehicle = await Vehicle.findById(vehicleId);
+        const direction = await Direction.findById(directionId);
+
+        if(vehicle.assignedRoute != undefined){
+            return res.status(400).json({ message: "Vehicle already assigned to a route" });
+        }
+        
+        if(direction.vehicle != undefined){
+            if(direction.vehicle != vehicleId){
+                await Vehicle.updateOne({ _id: direction.vehicle }, { $unset: { assignedRoute: "" } });
+            }
+        }
+
+        direction.vehicle = vehicleId;
+        vehicle.assignedRoute = directionId;
+        await direction.save();
+        await vehicle.save();
+        res.status(200).json({ message: "Vehicle assigned to route successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
