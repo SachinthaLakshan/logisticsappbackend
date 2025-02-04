@@ -30,14 +30,9 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-
-// routes
-// app.get("/", (req, res) => res.send("Express on Vercel"));
-// app.use("/api/user", userRoute);
-// app.use("/api/direction", directionRoute);
-// app.use("/api/admin", adminRoute);
-
-
+app.use("/api/user", userRoute);
+app.use("/api/direction", directionRoute);
+app.use("/api/admin", adminRoute);
 
 
 app.get("/", (req, res) => {
