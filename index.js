@@ -46,7 +46,7 @@ const onlineUsers = new Map();
 // ✅ Socket.io Configuration
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: ['*'],
     methods: ["GET", "POST"], // Allow GET and POST requests
     credentials: true, // Allow cookies/auth headers
   },
