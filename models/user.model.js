@@ -47,7 +47,8 @@ const UserSchema = mongoose.Schema(
         },
         vehicleDetails: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Vehicle'
+            ref: 'Vehicle',
+            required: false
         },
         fullName: {
             type: String,

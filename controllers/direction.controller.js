@@ -10,7 +10,7 @@ const client = new Client({});
 // Create a new Direction
 exports.createDirection = async (req, res) => {
     try {
-        const { origin, destination, waypoints, currentLocation, onTheWay, vehicle } = req.body;
+        const { origin, destination, waypoints, currentLocation, onTheWay, lorryCapacity } = req.body;
 
         // Create a new Direction instance with request data
         const direction = new Direction({
@@ -19,8 +19,9 @@ exports.createDirection = async (req, res) => {
             waypoints,
             currentLocation,
             onTheWay: onTheWay || false,
-            vehicle,
-            driverConfirmed: false
+            // vehicle,
+            driverConfirmed: false,
+            lorryCapacity
         });
 
         // Save the new Direction to the database
@@ -100,7 +101,7 @@ exports.findAssignedDirection = async (req, res) => {
     try {
         const { vehicleId } = req.params;
 
-        const foundDirection = await Direction.findOne({ vehicle: vehicleId, onTheWay: true }).populate('vehicle');
+        const foundDirection = await Direction.findOne({ vehicle: vehicleId, onTheWay: false }).populate('vehicle');
 
         if (!foundDirection) {
             return res.status(404).json({
@@ -259,5 +260,24 @@ exports.removeDirection = async (req, res) => {
         res.status(200).json({ message: "Direction deleted successfully" });
     } catch (error) {
         res.status(400).json({ message: "Error deleting direction", error: error.message });
+    }
+}
+
+exports.ignoreTripByDriver = async (req, res) => {
+    const { directionId } = req.params;
+    try {        
+        const direction = await Direction.findById(directionId);
+
+        if (!direction) {
+            return res.status(404).json({ message: "Direction not found" });
+        }
+
+        await Vehicle.updateOne({ _id: direction.vehicle }, { $unset: { assignedRoute: "" } });
+        await Direction.updateOne({ _id: direction._id }, { $unset: { vehicle : "" } });
+
+        
+        res.status(200).json({ message: "Direction Ignored Successfully" });
+    } catch (error) {
+        res.status(400).json({ message: "Error Ignored direction", error: error.message });
     }
 }

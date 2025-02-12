@@ -35,6 +35,11 @@ const VehicleSchema = mongoose.Schema(
             ref: 'Direction',
             required: false
         },
+        driver : {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: false
+        }
     },
     {
         timestamps: true,

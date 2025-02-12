@@ -14,22 +14,43 @@ exports.registerUser = async (req, res) => {
         }
         const hashedPassword = await bcrypt.hash(userDetails.password, 10);
 
-        const newVehicle = new Vehicle({
-            ...userDetails.vehicleDetails
-        });
-        await newVehicle.save();
-        delete userDetails.vehicleDetails;
-        const newUser = new User({
-            ...userDetails,
-            password: hashedPassword,
-            vehicleDetails: newVehicle._id
-        });
-        await newUser.save();
-        const token = jwt.sign({ userId: newUser._id, userType: newUser.userType }, "secret-key", {
-            expiresIn: "1h",
-        });
+        if(userDetails.userType == 'TransportProvider'){
+            const newVehicle = new Vehicle({
+                ...userDetails.vehicleDetails
+            });
+            
+            
+            const newUser = new User({
+                ...userDetails,
+                password: hashedPassword,
+                vehicleDetails: newVehicle._id
+            });
+            newVehicle.driver = newUser._id;
+            await newVehicle.save();
+            await newUser.save();
 
-        res.status(201).json({ message: "User registered successfully", token });
+            const token = jwt.sign({ userId: newUser._id, userType: newUser.userType }, "secret-key", {
+                expiresIn: "1h",
+            });
+    
+            res.status(201).json({ message: "User registered successfully", token });
+
+        }else{
+            delete userDetails.vehicleDetails;
+            
+            const newUser = new User({
+                ...userDetails,
+                password: hashedPassword
+            });
+            await newUser.save();
+
+            const token = jwt.sign({ userId: newUser._id, userType: newUser.userType }, "secret-key", {
+                expiresIn: "1h",
+            });
+    
+            res.status(201).json({ message: "User registered successfully", token });
+        }
+   
     } catch (error) {
         console.log(error);
 
