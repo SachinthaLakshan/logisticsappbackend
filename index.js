@@ -46,10 +46,11 @@ const onlineUsers = new Map();
 // ✅ Socket.io Configuration
 const io = new Server(server, {
   cors: {
-    origin: ['*'],
+    origin: allowedOrigins, // Allow only specified origins
     methods: ["GET", "POST"], // Allow GET and POST requests
     credentials: true, // Allow cookies/auth headers
   },
+  transports: ["websocket", "polling"], // Explicitly allow WebSocket and polling
 });
 
 io.on("connection", (socket) => {
