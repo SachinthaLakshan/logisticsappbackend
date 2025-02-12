@@ -24,6 +24,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.log("CORS blocked for origin:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -40,13 +41,12 @@ app.use("/api/user", userRoute);
 app.use("/api/direction", directionRoute);
 app.use("/api/admin", adminRoute);
 
-
 const onlineUsers = new Map();
 
 // ✅ Socket.io Configuration
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: "*",
     methods: ["GET", "POST"], // Allow GET and POST requests
     credentials: true, // Allow cookies/auth headers
   },
@@ -83,6 +83,7 @@ io.on("connection", (socket) => {
     }
   });
 });
+
 // ✅ Database Connection
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
