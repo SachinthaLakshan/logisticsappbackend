@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const directionRoute = require("./routes/direction.route.js");
 const userRoute = require("./routes/user.route.js");
 const adminRoute = require("./routes/admin.route.js");
+const customerRequestRoute = require("./routes/customerRequests.route.js");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -40,6 +41,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/user", userRoute);
 app.use("/api/direction", directionRoute);
 app.use("/api/admin", adminRoute);
+app.use("/api/customerrequest", customerRequestRoute);
 
 const onlineUsers = new Map();
 

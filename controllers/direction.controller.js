@@ -128,7 +128,7 @@ exports.getDirections = async (req, res) => {
     const { currentLatitude, currentLongitude } = req.body;
     try {
         let nearbyRoutes = [];
-        const directionsList = await Direction.find({ onTheWay: true });
+        const directionsList = await Direction.find({ onTheWay: true }).populate('vehicle').populate('createdBy');
         for (const direction of directionsList) {
 
             const response = await client.directions({
@@ -230,7 +230,7 @@ function isWithin5km(latitude, longitude, locations) {
             latitude: parseFloat(location.latitude),
             longitude: parseFloat(location.longitude)
         });
-        return distance <= 5; // Check if distance is within 5 km
+        return distance <= 50; // Check if distance is within 5 km
     });
 }
 
