@@ -10,7 +10,7 @@ const client = new Client({});
 // Create a new Direction
 exports.createDirection = async (req, res) => {
     try {
-        const { origin, destination, waypoints, currentLocation, onTheWay, lorryCapacity } = req.body;
+        const { origin, destination, waypoints, currentLocation, onTheWay, lorryCapacity,startTime,endDate,startDate,createdBy } = req.body;
 
         // Create a new Direction instance with request data
         const direction = new Direction({
@@ -21,9 +21,13 @@ exports.createDirection = async (req, res) => {
             onTheWay: onTheWay || false,
             // vehicle,
             driverConfirmed: false,
-            lorryCapacity
+            lorryCapacity,
+            startTime,
+            endDate,
+            startDate,
+            createdBy
         });
-
+        
         // Save the new Direction to the database
         const savedDirection = await direction.save();
 
@@ -101,7 +105,7 @@ exports.findAssignedDirection = async (req, res) => {
     try {
         const { vehicleId } = req.params;
 
-        const foundDirection = await Direction.findOne({ vehicle: vehicleId, onTheWay: false }).populate('vehicle');
+        const foundDirection = await Direction.findOne({ vehicle: vehicleId }).populate('vehicle').populate('createdBy');
 
         if (!foundDirection) {
             return res.status(404).json({
@@ -279,5 +283,23 @@ exports.ignoreTripByDriver = async (req, res) => {
         res.status(200).json({ message: "Direction Ignored Successfully" });
     } catch (error) {
         res.status(400).json({ message: "Error Ignored direction", error: error.message });
+    }
+}
+
+exports.startTripByDriver = async (req, res) => {
+    const { directionId } = req.params;
+    try {        
+        const direction = await Direction.findById(directionId);
+
+        if (!direction) {
+            return res.status(404).json({ message: "Direction not found" });
+        }
+
+        await Direction.updateOne({ _id: direction._id }, { $set: { onTheWay : true } });
+
+        
+        res.status(200).json({ message: "Trip started Successfully" });
+    } catch (error) {
+        res.status(400).json({ message: "Error started trip", error: error.message });
     }
 }
