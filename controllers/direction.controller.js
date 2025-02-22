@@ -141,7 +141,8 @@ exports.getDirections = async (req, res) => {
                 },
                 timeout: 1000 // milliseconds
             });
-
+            console.log('>>>>>>>>>>>>>>>>>>>>>>',process.env.GOOGLE_MAPS_API_KEY);
+            
 
             if (response.data.routes.length > 0) {
                 const overviewPath = response.data.routes[0].overview_polyline.points; // Get the encoded polyline points
