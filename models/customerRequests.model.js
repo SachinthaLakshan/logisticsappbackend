@@ -26,6 +26,11 @@ const CustomerRequestSchema = mongoose.Schema(
             type: Boolean,
             required: false,
         },
+        route:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Direction',
+            required: false
+        }
 
     },
     {

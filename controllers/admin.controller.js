@@ -1,6 +1,8 @@
+const { Model } = require("mongoose");
 const Direction = require("../models/direction.model");
 const User = require("../models/user.model");
 const Vehicle = require("../models/vehicle.modal");
+const CustomerRequest = require("../models/customerRequests.model");
 
 exports.getAllVehicles = async (req, res) => {
     try {
@@ -13,7 +15,16 @@ exports.getAllVehicles = async (req, res) => {
 
 exports.getAllRoutes = async (req, res) => {
     try {
-        const directions = await Direction.find().populate('vehicle');
+        const directions = await Direction.find({createdBy:req.params.userId}).populate('vehicle');
+        res.status(200).json(directions);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getAllOnGoingRoutes = async (req, res) => {
+    try {
+        const directions = await Direction.find({createdBy:req.params.userId,onTheWay:true,driverConfirmed : true}).populate('customerRequests').populate('vehicle');
         res.status(200).json(directions);
     } catch (error) {
         res.status(500).json({ message: error.message });

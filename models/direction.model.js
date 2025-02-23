@@ -55,6 +55,10 @@ const DirectionSchema = mongoose.Schema(
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
+        },
+        customerRequests: {
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: 'CustomerRequest'
         }
     },
     {
