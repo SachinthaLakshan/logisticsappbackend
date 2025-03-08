@@ -3,6 +3,7 @@ const { Client } = require('@googlemaps/google-maps-services-js');
 const Direction = require("../models/direction.model");
 const { mongo, default: mongoose } = require('mongoose');
 const Vehicle = require('../models/vehicle.modal');
+const CustomerRequest = require('../models/customerRequests.model');
 
 // Create a new client instance
 const client = new Client({});
@@ -58,17 +59,17 @@ exports.updateLorryDetails = async (req, res) => {
 
         if (!updatedVehicle) {
             return res.status(404).json({
-                message: "Direction with the specified lorryRegNumber not found",
+                message: "Capacity with the specified lorryRegNumber not found",
             });
         }
 
         res.status(200).json({
-            message: "Direction updated successfully",
+            message: "Capacity updated successfully",
             data: updatedVehicle,
         });
     } catch (error) {
         res.status(400).json({
-            message: "Error updating direction",
+            message: "Error updating Capacity",
             error: error.message,
         });
     }
@@ -255,6 +256,9 @@ exports.removeDirection = async (req, res) => {
         const direction = await Direction.findByIdAndDelete(directionId);
         if(direction.vehicle != undefined){
             await Vehicle.updateOne({ _id: direction.vehicle }, { $unset: { assignedRoute: "" } });
+        }
+        if(direction.customerRequests.length>0 ){
+            await CustomerRequest.deleteMany({ _id: { $in: direction.customerRequests } });
         }
         if (!direction) {
             return res.status(404).json({ message: "Direction not found" });

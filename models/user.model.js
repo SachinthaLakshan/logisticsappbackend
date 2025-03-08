@@ -57,7 +57,11 @@ const UserSchema = mongoose.Schema(
         farmBusinessLocation: {
             type: String,
             required: false
-        }
+        },
+        typeOfGoods: {
+            type: String,
+            required: false
+        },
     },
     {
         timestamps: true,

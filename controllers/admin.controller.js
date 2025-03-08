@@ -24,7 +24,22 @@ exports.getAllRoutes = async (req, res) => {
 
 exports.getAllOnGoingRoutes = async (req, res) => {
     try {
-        const directions = await Direction.find({createdBy:req.params.userId,onTheWay:true,driverConfirmed : true}).populate('customerRequests').populate('vehicle');
+        const directions = await Direction.find({createdBy:req.params.userId,onTheWay:true,driverConfirmed : true})
+            .populate({
+                path: 'customerRequests',
+                populate: {
+                    path: 'requestedTo',
+                    model: 'User'
+                }
+            })
+            .populate({
+                path: 'customerRequests',
+                populate: {
+                    path: 'requestedBy',
+                    model: 'User'
+                }
+            })
+            .populate('vehicle');
         res.status(200).json(directions);
     } catch (error) {
         res.status(500).json({ message: error.message });

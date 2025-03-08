@@ -30,6 +30,14 @@ const CustomerRequestSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Direction',
             required: false
+        },
+        capacityOfGoods:{
+            type: Number,
+            required: false
+        },
+        toAddress :{
+            type: String,
+            required: false
         }
 
     },
