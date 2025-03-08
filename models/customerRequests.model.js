@@ -38,6 +38,10 @@ const CustomerRequestSchema = mongoose.Schema(
         toAddress :{
             type: String,
             required: false
+        },
+        typeOfGoods :{
+            type: String,
+            required: false
         }
 
     },

@@ -57,3 +57,13 @@ exports.removeCustomerRequest = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+exports.getAcceptedCustomerRequestsByDriver = async (req, res) => {
+    try {
+        const customerRequests = await CustomerRequest.find({ requestedTo: req.params.driverId,driverAccepted:true }).populate('route').populate('vehicle').populate('requestedBy').populate('requestedTo');
+        res.status(200).json(customerRequests);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+    
+}
