@@ -320,3 +320,18 @@ exports.getDirectionById = async (req, res) => {
         res.status(400).json({ message: "Error finding direction", error: error.message });
     }
 }
+
+exports.getVehicleFullCapasity = async (req, res) => {
+    const { vehicleNo } = req.params;
+    try {        
+        const vehicle = await Vehicle.find( { licensePlateNumber: vehicleNo });
+
+        if (!vehicle) {
+            return res.status(404).json({ message: "Vehicle not found" });
+        }
+
+        res.status(200).json({ message: "Vehicle found successfully", data: vehicle[0].maximumLoadCapacity });
+    } catch (error) {
+        res.status(400).json({ message: "Error finding vehicle", error: error.message });
+    }
+}

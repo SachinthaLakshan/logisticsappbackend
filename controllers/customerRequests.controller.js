@@ -48,7 +48,7 @@ exports.removeCustomerRequest = async (req, res) => {
     try {
         
         const customerRequest = await CustomerRequest.findByIdAndDelete(req.params.id);
-        await Direction.updateOne({ _id: customerRequest.route._id }, { $pull: { customerRequests: req.params.id } });
+        await Direction.updateOne({ _id: customerRequest.route }, { $pull: { customerRequests: req.params.id },$pull: { waypoints:customerRequest.customerLocation } });
         if (!customerRequest) {
             return res.status(404).json({ message: "Customer Request not found" });
         }
@@ -66,4 +66,14 @@ exports.getAcceptedCustomerRequestsByDriver = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
     
+}
+
+exports.getCustomerRequestDelivered = async (req, res) => {
+    try {
+        const customerRequest = await CustomerRequest.findByIdAndDelete(req.params.id);
+        await Direction.updateOne({ _id: customerRequest.route }, { $pull: { customerRequests: req.params.id },$pull: { waypoints:customerRequest.customerLocation } });
+        res.status(200).json({ message: "Customer Request Delivered successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 }
