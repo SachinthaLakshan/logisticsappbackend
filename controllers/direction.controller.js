@@ -305,3 +305,18 @@ exports.startTripByDriver = async (req, res) => {
         res.status(400).json({ message: "Error started trip", error: error.message });
     }
 }
+
+exports.getDirectionById = async (req, res) => {
+    const { directionId } = req.params;
+    try {        
+        const direction = await Direction.findById(directionId).populate('vehicle').populate('createdBy');
+
+        if (!direction) {
+            return res.status(404).json({ message: "Direction not found" });
+        }
+
+        res.status(200).json({ message: "Direction found successfully", data: direction });
+    } catch (error) {
+        res.status(400).json({ message: "Error finding direction", error: error.message });
+    }
+}
