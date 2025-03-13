@@ -59,6 +59,10 @@ const DirectionSchema = mongoose.Schema(
         customerRequests: {
             type: [mongoose.Schema.Types.ObjectId],
             ref: 'CustomerRequest'
+        },
+        tripFinished: {
+            type: Boolean,
+            required: false,
         }
     },
     {

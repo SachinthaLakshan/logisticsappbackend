@@ -26,7 +26,8 @@ exports.createDirection = async (req, res) => {
             startTime,
             endDate,
             startDate,
-            createdBy
+            createdBy,
+            tripFinished: false
         });
         
         // Save the new Direction to the database
@@ -106,7 +107,7 @@ exports.findAssignedDirection = async (req, res) => {
     try {
         const { vehicleId } = req.params;
 
-        const foundDirection = await Direction.findOne({ vehicle: vehicleId }).populate('vehicle').populate('createdBy');
+        const foundDirection = await Direction.findOne({ vehicle: vehicleId,tripFinished:false }).populate('vehicle').populate('createdBy');
 
         if (!foundDirection) {
             return res.status(404).json({
@@ -129,7 +130,7 @@ exports.getDirections = async (req, res) => {
     const { currentLatitude, currentLongitude } = req.body;
     try {
         let nearbyRoutes = [];
-        const directionsList = await Direction.find({ onTheWay: true }).populate('vehicle').populate('createdBy');
+        const directionsList = await Direction.find({ onTheWay: true,tripFinished:false }).populate('vehicle').populate('createdBy');
         for (const direction of directionsList) {
 
             const response = await client.directions({
@@ -333,5 +334,21 @@ exports.getVehicleFullCapasity = async (req, res) => {
         res.status(200).json({ message: "Vehicle found successfully", data: vehicle[0].maximumLoadCapacity });
     } catch (error) {
         res.status(400).json({ message: "Error finding vehicle", error: error.message });
+    }
+}
+
+exports.markTripAsFinished = async (req, res) => {
+    const { directionId } = req.params;
+    try {        
+        const direction = await Direction.findById(directionId); 
+
+        if (!direction) {
+            return res.status(404).json({ message: "Direction not found" });
+        }    
+        await Direction.updateOne({ _id: direction._id }, { $set: { tripFinished : true } });
+        await Vehicle.updateOne({ _id: direction.vehicle }, { $unset: { assignedRoute: "" } });
+        res.status(200).json({ message: "Trip finished Successfully" });
+    } catch (error) {
+        res.status(400).json({ message: "Error finishing trip", error: error.message });
     }
 }

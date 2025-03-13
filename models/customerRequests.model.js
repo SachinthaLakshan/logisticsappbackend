@@ -42,7 +42,15 @@ const CustomerRequestSchema = mongoose.Schema(
         typeOfGoods :{
             type: String,
             required: false
-        }
+        },
+        destinationContactNumber :{
+            type: String,
+            required: false
+        },
+        isExpired:{
+            type: Boolean,
+            required: false
+        },
 
     },
     {
