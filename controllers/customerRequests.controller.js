@@ -68,6 +68,16 @@ exports.getAcceptedCustomerRequestsByDriver = async (req, res) => {
     
 }
 
+exports.getCustomerRequestsByCustomer = async (req, res) => {
+    try {
+        const customerRequests = await CustomerRequest.find({ requestedBy: req.params.driverId }).populate('route').populate('vehicle').populate('requestedBy').populate('requestedTo');
+        res.status(200).json(customerRequests);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+    
+}
+
 exports.getCustomerRequestDelivered = async (req, res) => {
     try {
         const customerRequest = await CustomerRequest.updateOne({_id:req.params.id},{isExpired:true});
