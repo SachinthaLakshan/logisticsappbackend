@@ -60,12 +60,12 @@ exports.updateLorryDetails = async (req, res) => {
 
         if (!updatedVehicle) {
             return res.status(404).json({
-                message: "Capacity with the specified lorryRegNumber not found",
+                message: `LorryRegNumber not found. requested No: ${lorryRegNumber} | requested Capasity:${lorryCapacity}`,
             });
         }
 
         res.status(200).json({
-            message: "Capacity updated successfully",
+            message: `Capacity updated successfully. Requested No: ${lorryRegNumber} | Requested Capasity:${lorryCapacity}`,
             data: updatedVehicle,
         });
     } catch (error) {
