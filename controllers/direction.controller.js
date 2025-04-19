@@ -330,8 +330,9 @@ exports.getVehicleFullCapasity = async (req, res) => {
         if (!vehicle) {
             return res.status(404).json({ message: "Vehicle not found" });
         }
+        let capacity = (vehicle[0].width * vehicle[0].height * vehicle[0].length).toFixed(2);
 
-        res.status(200).json({ message: "Vehicle found successfully", data: vehicle[0].maximumLoadCapacity });
+        res.status(200).json({ message: "Vehicle found successfully", data: capacity });
     } catch (error) {
         res.status(400).json({ message: "Error finding vehicle", error: error.message });
     }
